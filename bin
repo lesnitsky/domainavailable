@@ -7,9 +7,10 @@ var availabilityRegex = /<domainAvailability>(.*)<\/domainAvailability>/;
 
 http.get(reqUrl, (res) => {
 	var responseText = '';
+	res.setEncoding('utf-8');
 
 	res.on('data', (b) => {
-		responseText += b.toString('utf-8');
+		responseText += b;
 	});
 
 	res.on('end', () => {
