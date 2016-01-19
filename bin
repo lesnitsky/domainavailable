@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+var http = require('http');
+var domain = process.argv[2];
+var reqUrl = `http://www.whoisxmlapi.com/whoisserver/WhoisService?cmd=GET_DN_AVAILABILITY&domainName=${domain}`;
+var availabilityRegex = /<domainAvailability>(.*)<\/domainAvailability>/;
+
+http.get(reqUrl, (res) => {
+	var responseText = '';
+
+	res.on('data', (b) => {
+		responseText += b.toString('utf-8');
+	});
+
+	res.on('end', () => {
+		var answer = resolveAnswer(responseText);
+		console.log(answer);
+	});
+});
+
+var answers = {
+	'INVALID_DOMAIN_NAME': 'Are you high?',
+	'AVAILABLE': ' ✔︎ Go ahead!',
+	'UNAVAILABLE': ' ✘ Sorry bro..'
+};
+
+function resolveAnswer(responseText) {
+	if (responseText.indexOf('<ErrorMessage>') > 0) {
+		if (responseText.indexOf('is an invalid domain name') > 0) {
+			return answers.INVALID_DOMAIN_NAME;
+		} else {
+			return responseText;
+		}
+	}
+
+	try {
+		return answers[responseText.match(availabilityRegex)[1]];
+	} catch (err) {
+		return responseText;
+	}
+}

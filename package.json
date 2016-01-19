@@ -1,0 +1,10 @@
+{
+  "name": "domainavailable",
+  "version": "1.0.0",
+  "description": "Check domain availability",
+  "author": "Andrei Volchenko <volchenko.andrei@gmai.com>",
+  "bin": {
+    "iwantdomain": "./bin"
+  },
+  "license": "ISC"
+}
