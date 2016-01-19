@@ -1,4 +1,4 @@
-### Want new sexy domain? Check if it is available
+### Want new sexy domain? Check whether it is available
 
 #### Install
 ```sh
