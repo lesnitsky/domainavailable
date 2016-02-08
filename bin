@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-var http = require('http');
-var domain = process.argv[2];
+var http     = require('http');
+var punycode = require('punycode');
+
+var domain = punycode.toASCII(process.argv[2]);
 var reqUrl = `http://www.whoisxmlapi.com/whoisserver/WhoisService?cmd=GET_DN_AVAILABILITY&domainName=${domain}`;
 var availabilityRegex = /<domainAvailability>(.*)<\/domainAvailability>/;
 
