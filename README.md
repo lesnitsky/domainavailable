@@ -7,5 +7,5 @@ npm i -g r1zzu/domainavailable
 
 #### Use
 ```sh
-iwantdomain mysuperdomain.com
+iwantdomain [mysuperdomain.com]
 ```

@@ -1,25 +1,31 @@
 #!/usr/bin/env node
 
-var http     = require('http');
-var punycode = require('punycode');
+const http     = require('http');
+const punycode = require('punycode');
+const readline = require('readline');
 
-var domain = punycode.toASCII(process.argv[2]);
-var reqUrl = `http://www.whoisxmlapi.com/whoisserver/WhoisService?cmd=GET_DN_AVAILABILITY&domainName=${domain}`;
-var availabilityRegex = /<domainAvailability>(.*)<\/domainAvailability>/;
+const baseUrl = `http://www.whoisxmlapi.com/whoisserver/WhoisService?cmd=GET_DN_AVAILABILITY&domainName=`;
+const availabilityRegex = /<domainAvailability>(.*)<\/domainAvailability>/;
 
-http.get(reqUrl, (res) => {
-	var responseText = '';
-	res.setEncoding('utf-8');
+function request(domain) {
+	return new Promise((resolve, reject) => {
+		var reqUrl = `${baseUrl}${domain}`;
 
-	res.on('data', (b) => {
-		responseText += b;
+		http.get(reqUrl, (res) => {
+			var responseText = '';
+			res.setEncoding('utf-8');
+
+			res.on('data', (b) => {
+				responseText += b;
+			});
+
+			res.on('end', () => {
+				var answer = resolveAnswer(responseText);
+				resolve(answer);
+			});
+		});
 	});
-
-	res.on('end', () => {
-		var answer = resolveAnswer(responseText);
-		console.log(answer);
-	});
-});
+}
 
 var answers = {
 	'INVALID_DOMAIN_NAME': 'Are you high?',
@@ -42,3 +48,35 @@ function resolveAnswer(responseText) {
 		return responseText;
 	}
 }
+
+var domain;
+
+if (process.argv.length === 3) {
+	domain = punycode.toASCII(process.argv[2]);
+	request(domain)
+		.then((result) => console.log(result));
+
+	return;
+}
+
+const rl = readline.createInterface(process.stdin, process.stdout);
+console.log('Which one?');
+
+rl.prompt();
+
+rl.on('line', line => {
+	rl.pause();
+
+	domain = punycode.toASCII(line);
+	console.log(domain);
+
+	request(domain)
+		.then((result) => {
+			console.log(result);
+			rl.prompt();
+		});
+})
+.on('close', () => {
+	rl.write('Bye!');
+	process.exit(0);
+});
