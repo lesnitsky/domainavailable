@@ -2,7 +2,7 @@
 
 #### Install
 ```sh
-npm i -g r1zzu/domainavailable
+npm i -g R1ZZU/domainavailable
 ```
 
 #### Use
